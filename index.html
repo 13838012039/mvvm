@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js'></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id='app'>
+        <div>
+            书名：__name__ 数量：<span id='number'>__number__</span>
+        </div>
+        <div>
+            <button id='addOne'>加1</button>
+            <button id='minusOne'>减1</button>
+            <button id='reset'>归零</button>
+        </div>
+    </div>
+    <script>
+        // 在真正返回response之前使用函数
+        axios.interceptors.response.use(function(response) {
+            // let config = response.config
+            // let {
+            //     method,
+            //     url,
+            //     data
+            // } = config
+
+            let {
+                config: {
+                    method,
+                    url,
+                    data
+                }
+            } = response
+            if (url === '/books/1' && method === 'get') {
+                response.data = {
+                    'name': 'liuhuanhuan',
+                    number: 2,
+                    id: 1
+
+                }
+            }
+
+            return response
+        })
+        axios.get('/books/1')
+            .then(({
+                data
+            }) => {
+                let originalHtml = $('#app').html()
+                let newHtml = originalHtml.replace('__name__', data.name)
+                    .replace('__number__', data.number)
+            })
+        $('#addOne').on('click', function() {
+            var oldNumber = $('#number').text()
+            var newNumner = oldNumber - 0 + 1
+            $('#number').text(newNumner)
+        })
+        $('#minusOne').on('click', function() {
+            var oldNumber = $('#number').text()
+            var newNumner = oldNumber - 0 - 1
+            $('#number').text(newNumner)
+        })
+        $('#reset').on('click', function() {
+            var oldNumber = $('#number').text()
+            var newNumner = 0
+            $('#number').text(newNumner)
+        })
+    </script>
+</body>
+
+</html>
